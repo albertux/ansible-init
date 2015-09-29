@@ -43,11 +43,11 @@ def tiers():
     f.close()
 
 def roles():
-  # create all roles and subtrees with task/main.yml
+  # create all roles and subtrees with tasks/main.yml
   for role in arguments['--roles'].split(','):
-    os.system('mkdir -p roles/'+role+'/{tasks,handlers,files,templates,vars,defaults,meta} 2>/dev/null')
-    f = open('roles/'+role+'/tasks/main.yml','w')
-    f.write('---\n# file: roles/'+role+'/tasks/main.yml\n')
+    os.system('mkdir -p roles/' + role + '/{tasks,handlers,files,templates,vars,defaults,meta} 2>/dev/null')
+    f = open('roles/' + role + '/tasks/main.yml','w')
+    f.write('---\n# file: roles/' + role + '/tasks/main.yml\n')
     f.close()
 
 def init():
@@ -56,13 +56,19 @@ def init():
   f = open('site.yml','w')
   f.write('---\n# file: site.yml\n')
   f.close()
+
+  for environment in ['production','staging']:
+    f = open(environment,'w')
+    f.write('# file: ' + environment + '\n')
+    f.close()
+
   if arguments['--tiers']:
     tiers()
   if arguments['--roles']:
     roles()
 
 if __name__ == '__main__':
-  arguments = docopt(__doc__,version='0.0.1-draft/dev')
+  arguments = docopt(__doc__,version='0.0.2-draft/dev')
   # debug docopt
   # print(arguments)
   init()
