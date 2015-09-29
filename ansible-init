@@ -1,0 +1,68 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+#    ansible-init
+#
+#    helps create an ansible project directoy layour following best practices
+#
+#    http://docs.ansible.com/ansible/playbooks_best_practices.html#directory-layout
+
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+"""ansible-init
+
+Usage:
+  ansible-init  [ --tiers=<tiers> ] [ --roles=<roles> ]
+
+Options:
+  -h --help       displat the help
+  --version       display the version
+  --tiers=<tiers> tiers
+  --roles=<roles> roles
+"""
+
+import os
+from docopt import docopt
+
+def tiers():
+  # create all tier yml files
+  for tier in arguments['--tiers'].split(','):
+    f =  open(tier + '.yml','w')
+    f.write("---\n# file: " + tier + ".yml\n")
+    f.close()
+
+def roles():
+  # create all roles and subtrees with task/main.yml
+  for role in arguments['--roles'].split(','):
+    os.system('mkdir -p roles/'+role+'/{tasks,handlers,files,templates,vars,defaults,meta} 2>/dev/null')
+    f = open('roles/'+role+'/tasks/main.yml','w')
+    f.write('---\n# file: roles/'+role+'/tasks/main.yml\n')
+    f.close()
+
+def init():
+  # create the directory layout for an ansible project
+  os.system('mkdir group_vars host_vars 2>/dev/null')
+  f = open('site.yml','w')
+  f.write('---\n# file: site.yml\n')
+  f.close()
+  if arguments['--tiers']:
+    tiers()
+  if arguments['--roles']:
+    roles()
+
+if __name__ == '__main__':
+  arguments = docopt(__doc__,version='0.0.1-draft/dev')
+  # debug docopt
+  # print(arguments)
+  init()
